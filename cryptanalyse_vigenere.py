@@ -1,8 +1,8 @@
 # Sorbonne Université 3I024 2024-2025
 # TME 2 : Cryptanalyse du chiffre de Vigenere
 #
-# Etudiant.e 1 : NOM ET NUMERO D'ETUDIANT
-# Etudiant.e 2 : NOM ET NUMERO D'ETUDIANT
+# Etudiant.e 1 : Ramaholison 21301758
+# Etudiant.e 2 : Singh 21239295 
 
 import sys, getopt, string, math
 
@@ -11,20 +11,37 @@ alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 # Fréquence moyenne des lettres en français
 # À modifier
-freq_FR = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+freq_FR = [0.09213414037491088, 0.010354463742221126, 0.030178915678726964, 0.03753683726285317, 0.17174710607479665, 0.010939030914707838, 0.01061497737343803, 0.010717912027723734, 0.07507240372750529, 0.003832727374391129, 6.989390105819367e-05, 0.061368115927295096, 0.026498684088462805, 0.07030818127173859, 0.049140495636714375, 0.023697844853330825, 0.010160031617459242, 0.06609294363882899, 0.07816806814528274, 0.07374314880919855, 0.06356151362232132, 0.01645048271269667, 1.14371838095226e-05, 0.004071637436190045, 0.0023001447439151006, 0.0012263202640210343]
 
 # Chiffrement César
 def chiffre_cesar(txt, key):
     """
-    Documentation à écrire
+    Permet de chiffrer le 'txt' avec la cle 'key'
+    txt -> le texte à chiffrer
+    key -> la clé de chiffement
     """
+    texte = txt
+    txt = ""
+    base = ord('A')
+    for c in texte:
+	    char = ((ord(c) - base) + key) % 26 + base
+	    txt += chr(char)
+   
     return txt
 
 # Déchiffrement César
 def dechiffre_cesar(txt, key):
     """
-    Documentation à écrire
+    Permet de dechiffrer le 'txt' avec la cle 'key'
+    txt -> le texte à dechiffrer
+    key -> la clé de déchiffement
     """
+    texte = txt
+    txt = ""
+    base = ord('A')
+    for c in texte:
+        char = ((ord(c) - base) - key) % 26 + base
+        txt += chr(char)
     return txt
 
 # Chiffrement Vigenere
@@ -32,6 +49,14 @@ def chiffre_vigenere(txt, key):
     """
     Documentation à écrire
     """
+    texte = txt
+    txt = ""
+    base = ord('A')
+    i = 0
+    for c in texte:
+        char = ((ord(c) - base) + key[i]) % 26 + base
+        txt += chr(char)
+        i = (i+1) % len(key)
     return txt
 
 # Déchiffrement Vigenere
@@ -39,6 +64,14 @@ def dechiffre_vigenere(txt, key):
     """
     Documentation à écrire
     """
+    texte = txt
+    txt = ""
+    base = ord('A')
+    i = 0
+    for c in texte:
+        char = ((ord(c) - base) - key[i]) % 26 + base
+        txt += chr(char)
+        i = (i+1) % len(key)
     return txt
 
 # Analyse de fréquences
