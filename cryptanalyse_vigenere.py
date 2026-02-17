@@ -24,9 +24,8 @@ def chiffre_cesar(txt, key):
     txt = ""
     base = ord('A')
     for c in texte:
-	    char = ((ord(c) - base) + key) % 26 + base
-	    txt += chr(char)
-   
+        char = ((ord(c) - base) + key) % 26 + base
+        txt += chr(char)
     return txt
 
 # Déchiffrement César
@@ -80,6 +79,10 @@ def freq(txt):
     Documentation à écrire
     """
     hist=[0.0]*len(alphabet)
+    for c in txt:
+        if c in alphabet:
+            indice = alphabet.index(c)
+            hist[indice] += 1.0
     return hist
 
 # Renvoie l'indice dans l'alphabet
@@ -88,21 +91,38 @@ def lettre_freq_max(txt):
     """
     Documentation à écrire
     """
-    return 0
+    list = freq(txt)
+    return list.index(max(list))
 
 # indice de coïncidence
 def indice_coincidence(hist):
     """
     Documentation à écrire
     """
-    return 0.0
+    res = 0.0
+    total = sum(hist)
+    for valeur in hist:
+        res += (valeur * (valeur - 1.0))/(total * (total - 1.0))
+    return res
 
 # Recherche la longueur de la clé
 def longueur_clef(cipher):
     """
     Documentation à écrire
     """
-    return 0
+    key = 0
+    for key in range(1,21):
+        IC_moyen = 0
+        colonnes = [cipher[i::key] for i in range(key)]
+
+        for colonne in colonnes:
+            IC_moyen += indice_coincidence(freq(colonne))
+        
+        IC_moyen /= key
+
+        if IC_moyen > 0.06:
+           return key
+    return None
     
 # Renvoie le tableau des décalages probables étant
 # donné la longueur de la clé
