@@ -15,132 +15,143 @@ freq_FR = [0.09213414037491088, 0.010354463742221126, 0.030178915678726964, 0.03
 
 # Chiffrement César
 def chiffre_cesar(txt, key):
-    """
-    Permet de chiffrer le 'txt' avec la cle 'key'
-    txt -> le texte à chiffrer
-    key -> la clé de chiffement
-    """
-    texte = txt
-    txt = ""
-    base = ord('A')
-    for c in texte:
-        char = ((ord(c) - base) + key) % 26 + base
-        txt += chr(char)
-    return txt
+	"""
+	Permet de chiffrer le 'txt' avec la cle 'key'
+	txt -> le texte à chiffrer
+	key -> la clé de chiffement
+	"""
+	texte = txt
+	txt = ""
+	base = ord('A')
+	for c in texte:
+		char = ((ord(c) - base) + key) % 26 + base
+		txt += chr(char)
+	return txt
 
 # Déchiffrement César
 def dechiffre_cesar(txt, key):
-    """
-    Permet de dechiffrer le 'txt' avec la cle 'key'
-    txt -> le texte à dechiffrer
-    key -> la clé de déchiffement
-    """
-    texte = txt
-    txt = ""
-    base = ord('A')
-    for c in texte:
-        char = ((ord(c) - base) - key) % 26 + base
-        txt += chr(char)
-    return txt
+	"""
+	Permet de dechiffrer le 'txt' avec la cle 'key'
+	txt -> le texte à dechiffrer
+	key -> la clé de déchiffement
+	"""
+	texte = txt
+	txt = ""
+	base = ord('A')
+	for c in texte:
+		char = ((ord(c) - base) - key) % 26 + base
+		txt += chr(char)
+	return txt
 
 # Chiffrement Vigenere
 def chiffre_vigenere(txt, key):
-    """
-    Documentation à écrire
-    """
-    texte = txt
-    txt = ""
-    base = ord('A')
-    i = 0
-    for c in texte:
-        char = ((ord(c) - base) + key[i]) % 26 + base
-        txt += chr(char)
-        i = (i+1) % len(key)
-    return txt
+	"""
+	Documentation à écrire
+	"""
+	texte = txt
+	txt = ""
+	base = ord('A')
+	i = 0
+	for c in texte:
+		char = ((ord(c) - base) + key[i]) % 26 + base
+		txt += chr(char)
+		i = (i+1) % len(key)
+	return txt
 
 # Déchiffrement Vigenere
 def dechiffre_vigenere(txt, key):
-    """
-    Documentation à écrire
-    """
-    texte = txt
-    txt = ""
-    base = ord('A')
-    i = 0
-    for c in texte:
-        char = ((ord(c) - base) - key[i]) % 26 + base
-        txt += chr(char)
-        i = (i+1) % len(key)
-    return txt
+	"""
+	Documentation à écrire
+	"""
+	texte = txt
+	txt = ""
+	base = ord('A')
+	i = 0
+	for c in texte:
+		char = ((ord(c) - base) - key[i]) % 26 + base
+		txt += chr(char)
+		i = (i+1) % len(key)
+	return txt
 
 # Analyse de fréquences
 def freq(txt):
-    """
-    Documentation à écrire
-    """
-    hist=[0.0]*len(alphabet)
-    for c in txt:
-        if c in alphabet:
-            indice = alphabet.index(c)
-            hist[indice] += 1.0
-    return hist
+	"""
+	Documentation à écrire
+	"""
+	hist=[0.0]*len(alphabet)
+	for c in txt:
+		if c in alphabet:
+			indice = alphabet.index(c)
+			hist[indice] += 1.0
+	return hist
 
 # Renvoie l'indice dans l'alphabet
 # de la lettre la plus fréquente d'un texte
 def lettre_freq_max(txt):
-    """
-    Documentation à écrire
-    """
-    list = freq(txt)
-    return list.index(max(list))
+	"""
+	Documentation à écrire
+	"""
+	list = freq(txt)
+	return list.index(max(list))
 
 # indice de coïncidence
 def indice_coincidence(hist):
-    """
-    Documentation à écrire
-    """
-    res = 0.0
-    total = sum(hist)
-    for valeur in hist:
-        res += (valeur * (valeur - 1.0))/(total * (total - 1.0))
-    return res
+	"""
+	Documentation à écrire
+	"""
+	res = 0.0
+	total = sum(hist)
+	for valeur in hist:
+		res += (valeur * (valeur - 1.0))/(total * (total - 1.0))
+	return res
 
 # Recherche la longueur de la clé
 def longueur_clef(cipher):
-    """
-    Documentation à écrire
-    """
-    key = 0
-    for key in range(1,21):
-        IC_moyen = 0
-        colonnes = [cipher[i::key] for i in range(key)]
+	"""
+	Documentation à écrire
+	"""
+	key = 0
+	for key in range(1,21):
+		IC_moyen = 0
+		colonnes = [cipher[i::key] for i in range(key)]
 
-        for colonne in colonnes:
-            IC_moyen += indice_coincidence(freq(colonne))
-        
-        IC_moyen /= key
+		for colonne in colonnes:
+			IC_moyen += indice_coincidence(freq(colonne))
+		
+		IC_moyen /= key
 
-        if IC_moyen > 0.06:
-           return key
-    return None
-    
+		if IC_moyen > 0.06:
+		   return key
+	return 0
+	
 # Renvoie le tableau des décalages probables étant
 # donné la longueur de la clé
 # en utilisant la lettre la plus fréquente
 # de chaque colonne
 def clef_par_decalages(cipher, key_length):
-    """
-    Documentation à écrire
-    """
-    decalages=[0]*key_length
-    return decalages
+	"""
+	Documentation à écrire
+	"""
+	decalages=[0]*key_length
+	colonnes = [cipher[i::key_length] for i in range(key_length)]
+	i = 0
+	for colonne in colonnes:
+		indice_max = lettre_freq_max(colonne)
+		decalages[i] = (indice_max - alphabet.index('E'))% len(alphabet)
+		i+=1
+
+	return decalages
 
 # Cryptanalyse V1 avec décalages par frequence max
 def cryptanalyse_v1(cipher):
-    """
-    Documentation à écrire
-    """
-    return "TODO"
+	"""
+	Documentation à écrire
+	Il faut mettre une reponse là 
+	"""
+	key_length = longueur_clef(cipher)
+	decalages = clef_par_decalages(cipher,key_length)
+	
+	return dechiffre_vigenere(cipher,decalages)
 
 
 ################################################################
@@ -151,28 +162,32 @@ def cryptanalyse_v1(cipher):
 
 # Indice de coincidence mutuelle avec décalage
 def indice_coincidence_mutuelle(h1,h2,d):
-    """
-    Documentation à écrire
-    """
-    return 0.0
+	"""
+	Documentation à écrire
+
+	"""
+	nb_lettres = sum(h1) * sum(h2)
+	IC_h1 = indice_coincidence(h1)
+
+	return 0.0
 
 # Renvoie le tableau des décalages probables étant
 # donné la longueur de la clé
 # en comparant l'indice de décalage mutuel par rapport
 # à la première colonne
 def tableau_decalages_ICM(cipher, key_length):
-    """
-    Documentation à écrire
-    """
-    decalages=[0]*key_length
-    return decalages
+	"""
+	Documentation à écrire
+	"""
+	decalages=[0]*key_length
+	return decalages
 
 # Cryptanalyse V2 avec décalages par ICM
 def cryptanalyse_v2(cipher):
-    """
-    Documentation à écrire
-    """
-    return "TODO"
+	"""
+	Documentation à écrire
+	"""
+	return "TODO"
 
 
 ################################################################
@@ -184,27 +199,27 @@ def cryptanalyse_v2(cipher):
 # Prend deux listes de même taille et
 # calcule la correlation lineaire de Pearson
 def correlation(L1,L2):
-    """
-    Documentation à écrire
-    """
-    return 0.0
+	"""
+	Documentation à écrire
+	"""
+	return 0.0
 
 # Renvoie la meilleur clé possible par correlation
 # étant donné une longueur de clé fixée
 def clef_correlations(cipher, key_length):
-    """
-    Documentation à écrire
-    """
-    key=[0]*key_length
-    score = 0.0
-    return (score, key)
+	"""
+	Documentation à écrire
+	"""
+	key=[0]*key_length
+	score = 0.0
+	return (score, key)
 
 # Cryptanalyse V3 avec correlations
 def cryptanalyse_v3(cipher):
-    """
-    Documentation à écrire
-    """
-    return "TODO"
+	"""
+	Documentation à écrire
+	"""
+	return "TODO"
 
 
 ################################################################
@@ -215,47 +230,47 @@ def cryptanalyse_v3(cipher):
 
 # Lit un fichier et renvoie la chaine de caracteres
 def read(fichier):
-    f=open(fichier,"r")
-    txt=(f.readlines())[0].rstrip('\n')
-    f.close()
-    return txt
+	f=open(fichier,"r")
+	txt=(f.readlines())[0].rstrip('\n')
+	f.close()
+	return txt
 
 # Execute la fonction cryptanalyse_vN où N est la version
 def cryptanalyse(fichier, version):
-    cipher = read(fichier)
-    if version == 1:
-        return cryptanalyse_v1(cipher)
-    elif version == 2:
-        return cryptanalyse_v2(cipher)
-    elif version == 3:
-        return cryptanalyse_v3(cipher)
+	cipher = read(fichier)
+	if version == 1:
+		return cryptanalyse_v1(cipher)
+	elif version == 2:
+		return cryptanalyse_v2(cipher)
+	elif version == 3:
+		return cryptanalyse_v3(cipher)
 
 def usage():
-    print ("Usage: python3 cryptanalyse_vigenere.py -v <1,2,3> -f <FichierACryptanalyser>", file=sys.stderr)
-    sys.exit(1)
+	print ("Usage: python3 cryptanalyse_vigenere.py -v <1,2,3> -f <FichierACryptanalyser>", file=sys.stderr)
+	sys.exit(1)
 
 def main(argv):
-    size = -1
-    version = 0
-    fichier = ''
-    try:
-        opts, args = getopt.getopt(argv,"hv:f:")
-    except getopt.GetoptError:
-        usage()
-    for opt, arg in opts:
-        if opt == '-h':
-            usage()
-        elif opt in ("-v"):
-            version = int(arg)
-        elif opt in ("-f"):
-            fichier = arg
-    if fichier=='':
-        usage()
-    if not(version==1 or version==2 or version==3):
-        usage()
+	size = -1
+	version = 0
+	fichier = ''
+	try:
+		opts, args = getopt.getopt(argv,"hv:f:")
+	except getopt.GetoptError:
+		usage()
+	for opt, arg in opts:
+		if opt == '-h':
+			usage()
+		elif opt in ("-v"):
+			version = int(arg)
+		elif opt in ("-f"):
+			fichier = arg
+	if fichier=='':
+		usage()
+	if not(version==1 or version==2 or version==3):
+		usage()
 
-    print("Cryptanalyse version "+str(version)+" du fichier "+fichier+" :")
-    print(cryptanalyse(fichier, version))
-    
+	print("Cryptanalyse version "+str(version)+" du fichier "+fichier+" :")
+	print(cryptanalyse(fichier, version))
+	
 if __name__ == "__main__":
    main(sys.argv[1:])
