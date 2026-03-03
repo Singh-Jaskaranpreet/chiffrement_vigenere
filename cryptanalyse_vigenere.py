@@ -16,7 +16,7 @@ freq_FR = [0.09213414037491088, 0.010354463742221126, 0.030178915678726964, 0.03
 # Chiffrement César
 def chiffre_cesar(txt, key):
     """
-    Permet de chiffrer le 'txt' avec la cle 'key'
+    Permet de chiffrer en Cesar le 'txt' avec la cle 'key'
     txt -> le texte à chiffrer
     key -> la clé de chiffement
     """
@@ -31,7 +31,7 @@ def chiffre_cesar(txt, key):
 # Déchiffrement César
 def dechiffre_cesar(txt, key):
     """
-    Permet de dechiffrer le 'txt' avec la cle 'key'
+    Permet de dechiffrer en Cesar le 'txt' avec la cle 'key'
     txt -> le texte à dechiffrer
     key -> la clé de déchiffement
     """
@@ -46,7 +46,9 @@ def dechiffre_cesar(txt, key):
 # Chiffrement Vigenere
 def chiffre_vigenere(txt, key):
     """
-    Documentation à écrire
+    Chiffre un texte avec Vigenère.
+    On décale chaque lettre par la valeur de la clé correspondante.
+    Si la clé est plus courte, on boucle dessus avec un modulo.
     """
     texte = txt
     txt = ""
@@ -55,13 +57,14 @@ def chiffre_vigenere(txt, key):
     for c in texte:
         char = ((ord(c) - base) + key[i]) % 26 + base
         txt += chr(char)
-        i = (i+1) % len(key)
+        i = (i+1) % len(key) # On passe à la lettre suivante de la clé
     return txt
 
 # Déchiffrement Vigenere
 def dechiffre_vigenere(txt, key):
     """
-    Documentation à écrire
+    Déchiffre un texte avec Vigenère.
+    Même principe que le chiffrement mais on soustrait la clé.
     """
     texte = txt
     txt = ""
@@ -76,7 +79,8 @@ def dechiffre_vigenere(txt, key):
 # Analyse de fréquences
 def freq(txt):
     """
-    Documentation à écrire
+    Compte le nombre d'apparitions de chaque lettre de l'alphabet 
+    dans le texte passé en paramètre. Renvoie une liste de 26 éléments.
     """
     hist=[0.0]*len(alphabet)
     for c in txt:
@@ -89,7 +93,8 @@ def freq(txt):
 # de la lettre la plus fréquente d'un texte
 def lettre_freq_max(txt):
     """
-    Documentation à écrire
+    Cherche l'indice de la lettre qui apparaît le plus souvent.
+    Utile pour supposer que cette lettre correspond au 'E'.
     """
     list = freq(txt)
     return list.index(max(list))
@@ -97,10 +102,14 @@ def lettre_freq_max(txt):
 # indice de coïncidence
 def indice_coincidence(hist):
     """
-    Documentation à écrire
+    Calcule l'indice de coïncidence (IC) à partir d'un histogramme de fréquences.
+    Plus le texte ressemble à du français, plus l'IC est proche de 0.07.
     """
     res = 0.0
     total = sum(hist)
+    # Sécurité pour éviter la division par zero si la colonne est trop petite
+    if total <= 1.0:
+        return 0.0
     for valeur in hist:
         res += (valeur * (valeur - 1.0))/(total * (total - 1.0))
     return res
@@ -108,9 +117,10 @@ def indice_coincidence(hist):
 # Recherche la longueur de la clé
 def longueur_clef(cipher):
     """
-    Documentation à écrire
+    Teste les longueurs de clé de 1 à 20.
+    Découpe le texte en colonnes et calcule l'IC moyen.
+    Dès que l'IC moyen dépasse 0.06, on considère qu'on a trouvé la bonne taille.
     """
-    key = 0
     for key in range(1,21):
         IC_moyen = 0
         colonnes = [cipher[i::key] for i in range(key)]
@@ -130,7 +140,8 @@ def longueur_clef(cipher):
 # de chaque colonne
 def clef_par_decalages(cipher, key_length):
     """
-    Documentation à écrire
+    Pour chaque colonne, on cherche la lettre la plus fréquente.
+    On suppose que c'est un 'E' chiffré, ce qui nous donne le décalage.
     """
     decalages=[0]*key_length
     colonnes = [cipher[i::key_length] for i in range(key_length)]
@@ -145,8 +156,11 @@ def clef_par_decalages(cipher, key_length):
 # Cryptanalyse V1 avec décalages par frequence max
 def cryptanalyse_v1(cipher):
     """
-    Documentation à écrire
-    Il faut mettre une reponse là 
+    Réalise l'attaque de base (longueur de clé + lettre la plus fréquente).
+    
+    Analyse (Test 5) : Seulement 18 textes ont été cryptanalysés. 
+    Explication : Si le texte est trop court, le découpage en colonnes fait que les colonnes contiennent très peu de lettres. Les statistiques sont faussées 
+    et la lettre la plus fréquente de la colonne n'est pas forcément le 'E'.
     """
     key_length = longueur_clef(cipher)
     decalages = clef_par_decalages(cipher,key_length)
@@ -163,12 +177,14 @@ def cryptanalyse_v1(cipher):
 # Indice de coincidence mutuelle avec décalage
 def indice_coincidence_mutuelle(h1,h2,d):
     """
-    Documentation à écrire
-
+    Calcule l'ICM entre deux colonnes (h1 et h2) avec un décalage d.
+    Permet de voir si les deux colonnes ont été chiffrées avec la même lettre.
     """
     res = 0.0
     nb_lettres = sum(h1) * sum(h2)
-          
+
+    if nb_lettres == 0:
+        return 0.0
     
     for i in range(len(h1)):
         indice_decalage = (i+d)%len(h2)
@@ -181,9 +197,10 @@ def indice_coincidence_mutuelle(h1,h2,d):
 # à la première colonne
 def tableau_decalages_ICM(cipher, key_length):
     """
-    Documentation à écrire
+    Prend la première colonne comme référence.
+    Pour chaque autre colonne, teste tous les décalages (0 à 25) 
+    pour trouver celui qui maximise l'ICM avec la référence.
     """
-    
     decalages=[0]*key_length
     colonnes = [cipher[i::key_length] for i in range(key_length)]
     reference = freq(colonnes[0])
@@ -200,9 +217,24 @@ def tableau_decalages_ICM(cipher, key_length):
 # Cryptanalyse V2 avec décalages par ICM
 def cryptanalyse_v2(cipher):
     """
-    Documentation à écrire
+    Trouve les décalages relatifs avec l'ICM pour "aplatir" le Vigenère 
+    en un simple code de César, puis casse ce César.
+    
+    Analyse (Test 7) : Ici on obtient 43 textes cryptanalysés c'est à dire meilleur que la v1
+    Explication : Si le texte est court ou atypique, la lettre globale la plus fréquente du texte César (texte_cesar) 
+    peut ne pas être le 'E'. Si on se trompe de référence finale, tout le texte est faux.
     """
-    return "TODO"
+    key_length = longueur_clef(cipher)
+    decalages = tableau_decalages_ICM(cipher,key_length)
+    res = []
+    
+    # On aligne tout sur la colonne 0 (ça devient un César)
+    for i in range(len(cipher)):
+        res.append(dechiffre_cesar(cipher[i],decalages[i % key_length]))
+    texte_cesar = "".join(res)
+    
+    # On casse le César final en cherchant le 'E'
+    return dechiffre_cesar(texte_cesar, (ord(alphabet[lettre_freq_max(texte_cesar)]) - ord('E')))
 
 
 ################################################################
@@ -215,26 +247,76 @@ def cryptanalyse_v2(cipher):
 # calcule la correlation lineaire de Pearson
 def correlation(L1,L2):
     """
-    Documentation à écrire
+    Calcule le coefficient de corrélation de Pearson entre deux histogrammes.
+    Plus le résultat est proche de 1, plus les listes se ressemblent.
     """
-    return 0.0
+    espX = 1/len(L1) * sum(L1)
+    espY = 1/len(L2) * sum(L2)
+
+    num = 0.0
+    denX = 0.0
+    denY = 0.0
+    for i in range(len(L1)):
+        num += (L1[i] - espX) * (L2[i] - espY)
+        denX += (L1[i] - espX)**2
+        denY += (L2[i] - espY)**2
+        
+    if denX == 0.0 or denY == 0.0:
+        return 0.0
+        
+    # Arrondi pour éviter les erreurs de précision (les fameux 0.9999999)
+    return round(num / (math.sqrt(denX) * math.sqrt(denY)),10)
 
 # Renvoie la meilleur clé possible par correlation
 # étant donné une longueur de clé fixée
 def clef_correlations(cipher, key_length):
     """
-    Documentation à écrire
+    Compare chaque colonne directement avec les fréquences du français (freq_FR).
+    Renvoie le score moyen de corrélation et le tableau de la clé trouvée.
     """
     key=[0]*key_length
     score = 0.0
+    colonnes = [cipher[i::key_length] for i in range(key_length)]
+    j=0
+    for colonne in colonnes:
+        dec_max = 0.0
+        corr_max = -1.0
+        for i in range(len(alphabet)):
+            frecC = freq(dechiffre_cesar(colonne,i))
+            currentC = correlation(freq_FR,frecC)
+            if currentC > corr_max:
+                corr_max = currentC
+                dec_max = i
+        score += corr_max
+        key[j] = dec_max
+        j+=1
+        
+    score = score / key_length
+
     return (score, key)
 
 # Cryptanalyse V3 avec correlations
 def cryptanalyse_v3(cipher):
     """
-    Documentation à écrire
+    Teste toutes les longueurs de clé (de 1 à 20) et garde celle 
+    qui donne le meilleur score de corrélation de Pearson.
+    
+    Analyse (Test 9) : On obtient 94 textes cryptanalysés.C'est la méthode la plus robuste car elle compare
+    directement à l'alphabet complet français, pas juste à la lettre 'E'. 
+    Les textes qui échouent sont généralement extrêmement courts (statistiques 
+    inexploitables) ou alors ce sont des textes où la répartition des lettres
+    est artificiellement modifiée (par exemple un texte sans la lettre E).
     """
-    return "TODO"
+    key = []
+    corr = 0.0
+    for i in range(1,21):
+        currentC = clef_correlations(cipher,i)
+        # On cherche le score maximum parmi toutes les longueurs
+        if corr < currentC[0]:
+            corr = currentC[0]
+            key = currentC[1]
+        
+    return dechiffre_vigenere(cipher,key)
 
 
 ################################################################
