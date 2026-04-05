@@ -1,124 +1,45 @@
-# Cryptanalyse Vigenère — Chiffrement & Attaque statistique (Python)
+# Cryptanalyse de Vigenère
 
-> Projet académique — Licence Informatique, Sorbonne Université (cours CRYPTO-2026)  
-> Réalisé en **binôme** lors des séances de TME à la PPTI (créneau encadré)
-
----
-
-## À propos du projet
-
-Ce projet explore les **mécanismes de chiffrement classiques** et leur **cryptanalyse** à travers l'étude du chiffre de Vigenère. L'objectif pédagogique est double : comprendre les algorithmes de chiffrement symétrique historiques, et surtout maîtriser les méthodes statistiques permettant de les casser sans connaître la clé.
-
-Le projet est découpé en **9 étapes progressives**, chacune dans un fichier de test séparé, avec intégration continue GitLab automatisée.
+TME du cours Cryptographie — Licence Informatique, Sorbonne Université  
+Travail en binôme, séances encadrées à la PPTI
 
 ---
 
-## Pipeline de cryptanalyse
+## Description
 
-```
-Texte chiffré
-    │
-    ▼
-test-1  → Chiffre de César (décalage simple, attaque par force brute)
-    │
-    ▼
-test-2  → Chiffre de Vigenère (chiffrement / déchiffrement avec clé)
-    │
-    ▼
-test-3  → Analyse de fréquences + Indice de Coïncidence (IC)
-    │
-    ▼
-test-4  → Estimation de la longueur de clé par décalages
-    │
-    ▼
-test-5  → Cryptanalyse V1 : attaque par IC sur sous-séquences
-    │
-    ▼
-test-6  → ICM + décalages (raffinement de l'estimation)
-    │
-    ▼
-test-7  → Cryptanalyse V2 : reconstruction de clé partielle
-    │
-    ▼
-test-8  → Corrélations statistiques inter-colonnes
-    │
-    ▼
-test-9  → Cryptanalyse V3 : reconstruction complète et déchiffrement automatique
-```
+Implémentation progressive du chiffrement de Vigenère et de sa cryptanalyse par analyse statistique.  
+Le projet suit 9 étapes, chacune dans un fichier de test séparé, avec intégration continue GitLab automatisée à chaque push.
 
 ---
 
-## Structure du projet
+## Étapes du projet
 
-```
-chiffrement_vigenere/
-├── cryptanalyse_vigenere.py   → Module principal de cryptanalyse
-├── test-1-cesar.py            → Chiffre de César
-├── test-2-vigenere-cipher.py  → Chiffrement Vigenère
-├── test-3-freq-IC.py          → Fréquences et indice de coïncidence
-├── test-4-decalages.py        → Estimation longueur de clé
-├── test-5-cryptanalyse-V1.py  → Attaque V1
-├── test-6-ICM-decalages.py    → ICM raffiné
-├── test-7-cryptanalyse-V2.py  → Attaque V2
-├── test-8-correlations.py     → Corrélations statistiques
-├── test-9-cryptanalyse-V3.py  → Attaque V3 (automatique)
-├── test-all.sh                → Script de test global
-├── germinal.txt               → Corpus de référence (Zola) pour analyse de fréquences
-├── .gitlab-ci.yml             → Intégration continue GitLab
-└── data/                      → Textes chiffrés de test
-```
+| Fichier | Contenu |
+|--------|---------|
+| `test-1-cesar.py` | Chiffre de César (décalage simple) |
+| `test-2-vigenere-cipher.py` | Chiffrement / déchiffrement Vigenère |
+| `test-3-freq-IC.py` | Analyse de fréquences + Indice de Coïncidence |
+| `test-4-decalages.py` | Estimation de la longueur de clé |
+| `test-5-cryptanalyse-V1.py` | Première attaque par IC |
+| `test-6-ICM-decalages.py` | Raffinement de l'estimation |
+| `test-7-cryptanalyse-V2.py` | Reconstruction partielle de la clé |
+| `test-8-correlations.py` | Corrélations statistiques |
+| `test-9-cryptanalyse-V3.py` | Cryptanalyse complète automatique |
 
 ---
 
 ## Lancer les tests
 
 ```bash
-# Tous les tests d'un coup
+# Tous les tests
 ./test-all.sh
 
 # Un test spécifique
 python test-3-freq-IC.py
-
-# Test final (cryptanalyse complète)
-python test-9-cryptanalyse-V3.py
 ```
 
 ---
 
-## Concepts clés
+## Stack
 
-### Chiffrement
-- **César** : substitution monoalphabétique par décalage fixe
-- **Vigenère** : substitution polyalphabétique avec clé cyclique
-
-### Cryptanalyse (attaque sans clé connue)
-- **Indice de Coïncidence (IC)** : mesure statistique de la distribution des lettres
-- **Analyse de fréquences** : exploitation de la distribution typique du français
-- **Estimation de la longueur de clé** : test de Kasiski / IC moyen
-- **Corrélations** : comparaison entre sous-séquences pour reconstruire la clé
-
-### Corpus de référence
-Le fichier `germinal.txt` (roman de Zola) sert de référence statistique pour les fréquences de lettres en français — une approche réaliste de la cryptanalyse sur texte naturel.
-
----
-
-## Intégration continue
-
-Ce projet utilise GitLab CI/CD (`gitlab-ci.yml`) pour exécuter automatiquement les 9 tests à chaque push. C'est une approche **DevSecOps** concrète : validation automatisée du code cryptographique.
-
----
-
-## Contexte pédagogique
-
-> TME du cours **Cryptographie** (CRYPTO-2026), Licence Informatique, Sorbonne Université.  
-> Réalisé **en binôme** pendant les séances encadrées à la **PPTI de Jussieu**. Le README original du cours a été remplacé par cette documentation personnelle. Le faible nombre de commits s'explique par le travail en présentiel sur les machines de la PPTI avec synchronisation GitLab en fin de séance.
-
----
-
-## Technologies
-
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
-![GitLab CI](https://img.shields.io/badge/GitLab_CI-FC6D26?style=flat&logo=gitlab&logoColor=white)
-![Shell](https://img.shields.io/badge/Shell-121011?style=flat&logo=gnu-bash&logoColor=white)
-
----
+`Python` · `GitLab CI/CD` · `Shell`
